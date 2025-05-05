@@ -1,4 +1,4 @@
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 from django.urls import reverse_lazy
 from .models import Expense, Category
@@ -29,6 +29,15 @@ class ExpenseUpdateView(UpdateView):
     model = Expense
     form_class = ExpenseForm
     template_name = 'expenses/expense_form.html'
+    success_url = reverse_lazy('expense-list')
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)
+
+
+class ExpenseDeleteView(DeleteView):
+    model = Expense
+    template_name = 'expenses/expense_confirm_delete.html'
     success_url = reverse_lazy('expense-list')
 
     def get_queryset(self):
