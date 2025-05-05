@@ -5,6 +5,7 @@
         {% for expense in expenses %}
             <li>
                 {{expense.date}} - {{expense.description}} - {{expense.amount}}  ({{expense.category}})
+                <a href="{% url 'expense-update' expense.pk %}">Edit</a>
             </li>
         {% empty %}
             <li>No expenses recorded</li>
