@@ -1,4 +1,5 @@
 from django.views.generic.edit import CreateView
+from django.views.generic import ListView
 from django.urls import reverse_lazy
 from .models import Expense, Category
 from .forms import ExpenseForm, CategoryForm
@@ -13,3 +14,12 @@ class ExpenseCreateView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
+class ExpenseListView(ListView):
+    model = Expense
+    template_name = 'expenses/expense_list.html'
+    context_object_name = 'expenses'
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user).order_by('-date')
