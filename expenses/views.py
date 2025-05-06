@@ -3,6 +3,8 @@ from django.views.generic import ListView
 from django.urls import reverse_lazy
 from .models import Expense, Category
 from .forms import ExpenseForm, CategoryForm
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect, render
 
 
 class ExpenseCreateView(CreateView):
@@ -42,3 +44,15 @@ class ExpenseDeleteView(DeleteView):
 
     def get_queryset(self):
         return Expense.objects.filter(user=self.request.user)
+
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
