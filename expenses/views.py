@@ -5,9 +5,10 @@ from .models import Expense, Category
 from .forms import ExpenseForm, CategoryForm
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class ExpenseCreateView(CreateView):
+class ExpenseCreateView(LoginRequiredMixin, CreateView):
     model = Expense
     form_class = ExpenseForm
     template_name = 'expenses/expense_form.html'
@@ -18,7 +19,7 @@ class ExpenseCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ExpenseListView(ListView):
+class ExpenseListView(LoginRequiredMixin, ListView):
     model = Expense
     template_name = 'expenses/expense_list.html'
     context_object_name = 'expenses'
@@ -27,7 +28,7 @@ class ExpenseListView(ListView):
         return Expense.objects.filter(user=self.request.user).order_by('-date')
 
 
-class ExpenseUpdateView(UpdateView):
+class ExpenseUpdateView(LoginRequiredMixin, UpdateView):
     model = Expense
     form_class = ExpenseForm
     template_name = 'expenses/expense_form.html'
@@ -37,7 +38,7 @@ class ExpenseUpdateView(UpdateView):
         return Expense.objects.filter(user=self.request.user)
 
 
-class ExpenseDeleteView(DeleteView):
+class ExpenseDeleteView(LoginRequiredMixin, DeleteView):
     model = Expense
     template_name = 'expenses/expense_confirm_delete.html'
     success_url = reverse_lazy('expense-list')
