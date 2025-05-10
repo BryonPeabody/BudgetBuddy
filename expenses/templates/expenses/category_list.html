@@ -3,12 +3,15 @@
   <h2>Categories</h2>
   <li>
     {% for category in categories %}
-      <ul>{{ category }}</ul>
-      <a href="{% url 'category-update' category.pk %}">Edit</a>
-      <a href="{% url 'category-delete' category.pk %}">Delete</a>
+      <ul>
+        {{ category }}
+        <a href="{% url 'category-update' category.pk %}">Edit</a>
+        <a href="{% url 'category-delete' category.pk %}">Delete</a>
+      </ul>
     {% empty %}
       <ul>No categories yet</ul>
     {% endfor %}
   </li>
+<a href="{% url 'category-create' %}">New Category</a>
 
 {% endblock %}

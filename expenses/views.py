@@ -91,8 +91,8 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
 
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
-    template_name = 'category_confirm_delete.html'
+    template_name = 'expenses/category_confirm_delete.html'
     success_url = reverse_lazy('category-list')
 
     def get_queryset(self):
-        return Expense.objects.filter(user=self.request.user)
+        return Category.objects.filter(user=self.request.user)
