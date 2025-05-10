@@ -4,6 +4,8 @@
   <li>
     {% for category in categories %}
       <ul>{{ category }}</ul>
+      <a href="{% url 'category-update' category.pk %}">Edit</a>
+      <a href="{% url 'category-delete' category.pk %}">Delete</a>
     {% empty %}
       <ul>No categories yet</ul>
     {% endfor %}
