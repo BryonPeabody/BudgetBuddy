@@ -102,3 +102,40 @@ class TestCategoryViews(TestCase):
     def test_login_required_for_category_list(self):
         response = self.client.get(reverse('category-list'))
         self.assertRedirects(response, '/login/?next=/expenses/categories/')
+
+    def test_category_form_rejects_blank_submission(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('category-create'), {})
+
+        self.assertEqual(Category.objects.count(), 0)
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_cannot_edit_another_users_category(self):
+        category = Category.objects.create(user=self.other_user, category='dont touch')
+        self.client.login(username='testuser', password='testpassword')
+
+        response = self.client.post(reverse('category-update', args=[category.pk]), {
+            'category': 'try to touch'
+        })
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_nonexistent_category_returns_404(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('category-delete', args=[9999]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_only_sees_their_own_categories(self):
+        category1 = Category.objects.create(user=self.user, category='my data')
+        category2 = Category.objects.create(user=self.other_user, category='not mine')
+
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.get(reverse('category-list'))
+
+        self.assertContains(response, 'my data')
+        self.assertNotContains(response, 'not mine')
+
+
+
+
+
