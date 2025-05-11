@@ -98,7 +98,7 @@ This project includes tests for:
 ## 👤 Author
 
 - Bryon Peabody (Tempe, AZ)
-- [LinkedIn](https://www.linkedin.com) 
+- [LinkedIn](https://www.linkedin.com/in/bryonpeabody) 
 - [GitHub](https://github.com/BryonPeabody)
 
 ---
