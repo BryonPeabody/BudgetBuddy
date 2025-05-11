@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
   <h2>Categories</h2>
-  <li>
+  <ul>
     {% for category in categories %}
-      <ul>
+      <li>
         {{ category }}
         <a href="{% url 'category-update' category.pk %}">Edit</a>
         <a href="{% url 'category-delete' category.pk %}">Delete</a>
-      </ul>
+      </li>
     {% empty %}
-      <ul>No categories yet</ul>
+      <li>No categories yet</li>
     {% endfor %}
-  </li>
+  </ul>
 <a href="{% url 'category-create' %}">New Category</a>
 
 {% endblock %}

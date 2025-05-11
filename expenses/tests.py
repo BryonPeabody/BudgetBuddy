@@ -56,3 +56,49 @@ class TestExpenseViews(TestCase):
         })
         self.assertEqual(User.objects.count(), 2)  # testuser, otheruser, newuser
         self.assertRedirects(response, reverse('login'))
+
+
+class TestCategoryViews(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.other_user = User.objects.create_user(username='seconduser', password='secondpassword')
+
+    def test_create_category(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('category-create'), {
+            'category': 'groceries'
+        })
+        self.assertEqual(Category.objects.count(), 1)
+        self.assertRedirects(response, reverse('category-list'))
+
+    def test_category_list_user_filtering(self):
+        Category.objects.create(user=self.user, category='my stuff')
+        Category.objects.create(user=self.other_user, category='not mine')
+
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.get(reverse('category-list'))
+
+        self.assertContains(response, 'my stuff')
+        self.assertNotContains(response, 'not mine')
+
+    def test_update_category(self):
+        category = Category.objects.create(user=self.user, category='Old Name')
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('category-update', args=[category.pk]), {
+            'category': 'New Name'
+        })
+        category.refresh_from_db()
+        self.assertEqual(category.category, 'New Name')
+        self.assertRedirects(response, reverse('category-list'))
+
+    def test_delete_category(self):
+        category = Category.objects.create(user=self.user, category='To Delete')
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('category-delete', args=[category.pk]))
+        self.assertEqual(Category.objects.count(), 0)
+        self.assertRedirects(response, reverse('category-list'))
+
+    def test_login_required_for_category_list(self):
+        response = self.client.get(reverse('category-list'))
+        self.assertRedirects(response, '/login/?next=/expenses/categories/')
